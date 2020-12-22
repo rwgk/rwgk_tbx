@@ -30,7 +30,12 @@ inline std::shared_ptr<drvd> make_shared_drvd() {
   return std::shared_ptr<drvd>(new drvd);
 }
 
+inline std::shared_ptr<base> make_shared_drvd_up_cast() {
+  return std::shared_ptr<base>(new drvd);
+}
+
 inline int pass_shared_base(std::shared_ptr<base> b) { return b->id(); }
+inline int pass_shared_drvd(std::shared_ptr<drvd> d) { return d->id(); }
 
 }  // namespace
 
@@ -42,5 +47,7 @@ BOOST_PYTHON_MODULE(rwgk_tbx_smart_ptr_private_first_base_ext)
   py::class_<drvd, py::bases<base>, std::shared_ptr<drvd>>("drvd");
 
   py::def("make_shared_drvd", make_shared_drvd);
+  py::def("make_shared_drvd_up_cast", make_shared_drvd_up_cast);
   py::def("pass_shared_base", pass_shared_base);
+  py::def("pass_shared_drvd", pass_shared_drvd);
 }
