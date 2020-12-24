@@ -10,5 +10,8 @@ env_etc.include_registry.append(
     env_etc.boost_include,
     env_etc.python_include])
 env.SharedLibrary(
+  target="#lib/rwgk_tbx_private_first_base_ext",
+  source="private_first_base_ext.cpp")
+env.SharedLibrary(
   target="#lib/rwgk_tbx_smart_ptr_private_first_base_ext",
   source="smart_ptr_private_first_base_ext.cpp")
