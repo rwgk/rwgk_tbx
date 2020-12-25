@@ -9,6 +9,10 @@ env_etc.include_registry.append(
     env_etc.boost_adaptbx_include,
     env_etc.boost_include,
     env_etc.python_include])
+env_ahe = env.Clone(SHCXXFLAGS=["-Wno-deprecated-declarations"])
+env_ahe.SharedLibrary(
+  target="#lib/rwgk_tbx_auto_ptr_holder_ext",
+  source="auto_ptr_holder_ext.cpp")
 env.SharedLibrary(
   target="#lib/rwgk_tbx_private_first_base_ext",
   source="private_first_base_ext.cpp")
