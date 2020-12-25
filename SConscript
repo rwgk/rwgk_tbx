@@ -13,5 +13,8 @@ env.SharedLibrary(
   target="#lib/rwgk_tbx_private_first_base_ext",
   source="private_first_base_ext.cpp")
 env.SharedLibrary(
+  target="#lib/rwgk_tbx_shared_ptr_use_count_ext",
+  source="shared_ptr_use_count_ext.cpp")
+env.SharedLibrary(
   target="#lib/rwgk_tbx_smart_ptr_private_first_base_ext",
   source="smart_ptr_private_first_base_ext.cpp")
