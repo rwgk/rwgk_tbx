@@ -46,6 +46,7 @@ BOOST_PYTHON_MODULE(rwgk_tbx_shared_ptr_use_count_ext)
              std::shared_ptr<pointee_sharedp>>("pointee_sharedp")
     .def(py::init<>());
   py::class_<owner<pointee_sharedp>>("owner_pointee_sharedp")
+    .def(py::init<>())
     .def("get", &owner<pointee_sharedp>::get)
     .def("set", &owner<pointee_sharedp>::set)
     .def("use_count", &owner<pointee_sharedp>::use_count);
