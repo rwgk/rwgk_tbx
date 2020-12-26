@@ -6,8 +6,9 @@
 
 namespace {
 
-struct pointee_autoptr {
-  pointee_autoptr() : id{130} {}
+template <int Id>
+struct pointee {
+  pointee() : id{Id} {}
   int get_id() const { return id; }
   int id;
 };
@@ -27,8 +28,13 @@ inline bool is_owning(const std::auto_ptr<T>& aoptr) {
 }
 
 template <typename T>
-inline std::auto_ptr<T> pass_through(std::auto_ptr<T> aoptr) {
+inline std::auto_ptr<T> auto_pass_through(std::auto_ptr<T> aoptr) {
   return aoptr;
+}
+
+template <typename T>
+inline std::shared_ptr<T> shared_pass_through(std::shared_ptr<T> shptr) {
+  return shptr;
 }
 
 }  // namespace
@@ -37,18 +43,30 @@ BOOST_PYTHON_MODULE(rwgk_tbx_auto_ptr_holder_ext)
 {
   namespace py = boost::python;
 
-  py::class_<pointee_autoptr,
-             std::auto_ptr<pointee_autoptr>,
+  py::class_<pointee<120>>("pointee_default")
+    .def(py::init<>())
+    .def("get_id", &pointee<120>::get_id);
+  py::class_<owner<pointee<120>>,
+             boost::noncopyable>("owner_pointee_default")
+    .def(py::init<>())
+    .def("get", &owner<pointee<120>>::get)
+    .def("is_owning", &owner<pointee<120>>::is_owning);
+  ;
+  py::def("default_auto_pass_through", auto_pass_through<pointee<120>>);
+
+  py::class_<pointee<130>,
+             std::auto_ptr<pointee<130>>,
              boost::noncopyable>("pointee_autoptr")
     .def(py::init<>())
-    .def("get_id", &pointee_autoptr::get_id);
-  py::class_<owner<pointee_autoptr>,
+    .def("get_id", &pointee<130>::get_id);
+  py::class_<owner<pointee<130>>,
              boost::noncopyable>("owner_pointee_autoptr")
     .def(py::init<>())
-    .def("get", &owner<pointee_autoptr>::get)
-    .def("set", &owner<pointee_autoptr>::set)
-    .def("is_owning", &owner<pointee_autoptr>::is_owning);
+    .def("get", &owner<pointee<130>>::get)
+    .def("set", &owner<pointee<130>>::set)
+    .def("is_owning", &owner<pointee<130>>::is_owning);
   ;
-  py::def("is_owning", is_owning<pointee_autoptr>);
-  py::def("autoptr_pass_through", pass_through<pointee_autoptr>);
+  py::def("autoptr_is_owning", is_owning<pointee<130>>);
+  py::def("autoptr_auto_pass_through", auto_pass_through<pointee<130>>);
+  py::def("autoptr_shared_pass_through", shared_pass_through<pointee<130>>);
 }
