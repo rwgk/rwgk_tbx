@@ -28,6 +28,9 @@ inline std::shared_ptr<T> pass_through(std::shared_ptr<T> shptr) {
   return shptr;
 }
 
+template <typename T>
+inline std::auto_ptr<T> make_auto_ptr() { return std::auto_ptr<T>(new T); }
+
 }  // namespace
 
 BOOST_PYTHON_MODULE(rwgk_tbx_shared_ptr_use_count_ext)
@@ -41,6 +44,7 @@ BOOST_PYTHON_MODULE(rwgk_tbx_shared_ptr_use_count_ext)
     .def("set", &owner<pointee_default>::set)
     .def("use_count", &owner<pointee_default>::use_count);
   py::def("default_use_count", use_count<pointee_default>);
+  py::def("default_make_auto_ptr", make_auto_ptr<pointee_default>);
 
   py::class_<pointee_sharedp,
              std::shared_ptr<pointee_sharedp>>("pointee_sharedp")
@@ -52,4 +56,5 @@ BOOST_PYTHON_MODULE(rwgk_tbx_shared_ptr_use_count_ext)
     .def("use_count", &owner<pointee_sharedp>::use_count);
   py::def("sharedp_use_count", use_count<pointee_sharedp>);
   py::def("sharedp_pass_through", pass_through<pointee_sharedp>);
+  py::def("sharedp_make_auto_ptr", make_auto_ptr<pointee_sharedp>);
 }

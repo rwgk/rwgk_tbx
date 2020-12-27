@@ -13,23 +13,23 @@ struct pointee {
   int id;
 };
 
-template <typename T>
+template <typename T, template <typename> class SmartPointer = std::auto_ptr>
 struct owner {
-  std::auto_ptr<T> aoptr;
-  owner() : aoptr(new T) {}
-  std::auto_ptr<T> get() { return aoptr; }
-  void set(std::auto_ptr<T> other) { aoptr = other; }
-  bool is_owning() const { return aoptr.get() != nullptr; }
+  SmartPointer<T> smptr;
+  owner() : smptr(new T) {}
+  SmartPointer<T> get() { return smptr; }
+  void set(SmartPointer<T> other) { smptr = other; }
+  bool is_owning() const { return smptr.get() != nullptr; }
 };
 
 template <typename T>
-inline bool is_owning(const std::auto_ptr<T>& aoptr) {
-  return aoptr.get() != nullptr;
+inline bool is_owning(const std::auto_ptr<T>& smptr) {
+  return smptr.get() != nullptr;
 }
 
 template <typename T>
-inline std::auto_ptr<T> auto_pass_through(std::auto_ptr<T> aoptr) {
-  return aoptr;
+inline std::auto_ptr<T> auto_pass_through(std::auto_ptr<T> smptr) {
+  return smptr;
 }
 
 template <typename T>
@@ -69,4 +69,11 @@ BOOST_PYTHON_MODULE(rwgk_tbx_auto_ptr_holder_ext)
   py::def("autoptr_is_owning", is_owning<pointee<130>>);
   py::def("autoptr_auto_pass_through", auto_pass_through<pointee<130>>);
   py::def("autoptr_shared_pass_through", shared_pass_through<pointee<130>>);
+  py::class_<owner<pointee<130>,
+                   std::shared_ptr>>("owner_shared_pointee_autoptr")
+    .def(py::init<>())
+    .def("get", &owner<pointee<130>, std::shared_ptr>::get)
+    .def("set", &owner<pointee<130>, std::shared_ptr>::set)
+    .def("is_owning", &owner<pointee<130>, std::shared_ptr>::is_owning);
+  ;
 }

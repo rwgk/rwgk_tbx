@@ -10,8 +10,9 @@ def test_default():
   # Cannot return shared_ptr:
   try:
     owner.get()
-  except TypeError:
-    pass
+  except TypeError as e:
+    assert str(e).startswith(
+        "No to_python (by-value) converter found for C++ type: ")
   else:
     raise RuntimeError("TypeError not raised.")
   p0 = m.pointee_default()
@@ -42,10 +43,22 @@ def test_sharedp():
   assert m.sharedp_use_count(p0) == 2  # Not 3.
 
 
+def test_auto_ptr_returns():
+  for make_auto_ptr in (m.default_make_auto_ptr, m.sharedp_make_auto_ptr):
+    try:
+      make_auto_ptr()
+    except TypeError as e:
+      assert str(e).startswith(
+          "No to_python (by-value) converter found for C++ type: ")
+    else:
+      raise RuntimeError("TypeError not raised.")
+
+
 def run(args):
   assert not args
   test_default()
   test_sharedp()
+  test_auto_ptr_returns()
   print("Done.")
 
 
