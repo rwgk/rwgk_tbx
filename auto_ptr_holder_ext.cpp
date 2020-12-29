@@ -37,6 +37,15 @@ inline std::shared_ptr<T> shared_pass_through(std::shared_ptr<T> shptr) {
   return shptr;
 }
 
+struct base {};
+struct drvd : base {};
+
+inline std::auto_ptr<drvd> make_drvd() { return std::auto_ptr<drvd>(new drvd); }
+inline bool pass_base_raw_ptr(const base* b) { return b != nullptr; }
+inline bool pass_drvd_raw_ptr(const drvd* d) { return d != nullptr; }
+inline bool pass_base_auto_ptr(std::auto_ptr<base> b) { return b.get() != nullptr; }
+inline bool pass_drvd_auto_ptr(std::auto_ptr<drvd> d) { return d.get() != nullptr; }
+
 }  // namespace
 
 BOOST_PYTHON_MODULE(rwgk_tbx_auto_ptr_holder_ext)
@@ -76,4 +85,12 @@ BOOST_PYTHON_MODULE(rwgk_tbx_auto_ptr_holder_ext)
     .def("set", &owner<pointee<130>, std::shared_ptr>::set)
     .def("is_owning", &owner<pointee<130>, std::shared_ptr>::is_owning);
   ;
+
+  py::class_<base, std::auto_ptr<base>, boost::noncopyable>("base");
+  py::class_<drvd, std::auto_ptr<drvd>, py::bases<base>, boost::noncopyable>("drvd");
+  py::def("make_drvd", make_drvd);
+  py::def("pass_base_raw_ptr", pass_base_raw_ptr);
+  py::def("pass_drvd_raw_ptr", pass_drvd_raw_ptr);
+  py::def("pass_base_auto_ptr", pass_base_auto_ptr);
+  py::def("pass_drvd_auto_ptr", pass_drvd_auto_ptr);
 }

@@ -87,11 +87,28 @@ def test_autoptr_shared():
   assert w() is None
 
 
+def test_autoptr_base_drvd():
+  d = m.make_drvd()
+  assert m.pass_drvd_raw_ptr(d)
+  assert m.pass_drvd_auto_ptr(d)
+  assert not m.pass_drvd_auto_ptr(d)
+  d = m.make_drvd()
+  assert m.pass_base_raw_ptr(d)
+  try:
+    m.pass_base_auto_ptr(d)
+  except Exception as e:
+    assert e.__class__.__name__ == "ArgumentError"
+    assert str(e).startswith("Python argument types in")
+  else:
+    raise RuntimeError("ArgumentError not raised.")
+
+
 def run(args):
   assert not args
   test_default()
   test_autoptr()
   test_autoptr_shared()
+  test_autoptr_base_drvd()
   print("Done.")
 
 
