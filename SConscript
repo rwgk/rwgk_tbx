@@ -22,3 +22,6 @@ env_ndd.SharedLibrary(
 env.SharedLibrary(
   target="#lib/rwgk_tbx_smart_ptr_private_first_base_ext",
   source="smart_ptr_private_first_base_ext.cpp")
+env.SharedLibrary(
+  target="#lib/rwgk_tbx_cpp_base_py_derived_ext",
+  source="cpp_base_py_derived_ext.cpp")
