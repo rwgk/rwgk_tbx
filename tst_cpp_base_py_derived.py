@@ -34,7 +34,7 @@ def expect_type_error(callable):
 def test_base():
   b = m.base()
   assert b.get_num() == 100
-  m.get_num(b) == 100
+  assert m.get_num(b) == 100
   # bc = b.clone()
   # assert bc.get_num() == 150
   # assert m.clone_get_num(b) == 103157
