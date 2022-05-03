@@ -1,23 +1,6 @@
-// Demonstration of UB (Undefined Behavior) in handling of polymorphic pointers,
-// specifically:
-// https://github.com/pybind/pybind11/blob/30eb39ed79d1e2eeff15219ac00773034300a5e6/include/pybind11/cast.h#L229
-//     `return reinterpret_cast<V *&>(vh[0]);`
-// casts a `void` pointer to a `base`. The `void` pointer is obtained through
-// a `dynamic_cast` here:
-// https://github.com/pybind/pybind11/blob/30eb39ed79d1e2eeff15219ac00773034300a5e6/include/pybind11/cast.h#L852
-//     `return dynamic_cast<const void*>(src);`
-// The `dynamic_cast` is well-defined:
-// https://en.cppreference.com/w/cpp/language/dynamic_cast
-//     4) If expression is a pointer to a polymorphic type, and new-type
-//        is a pointer to void, the result is a pointer to the most derived
-//        object pointed or referenced by expression.
-// But the `reinterpret_cast` above is UB: `test_make_drvd_pass_base` in
-// `test_private_first_base.py` fails with a Segmentation Fault (Linux,
-// clang++ -std=c++17).
-// The only well-defined cast is back to a `drvd` pointer (`static_cast` can be
-// used), which can then safely be cast up to a `base` pointer. Note that
-// `test_make_drvd_up_cast_pass_drvd` passes because the `void` pointer is cast
-// to `drvd` pointer in this situation.
+// THIS ACTUALLY WORKS:
+// `py::multiple_inheritance()` was missing before.
+// https://github.com/pybind/pybind11/pull/2672#issuecomment-748543648
 
 #include "pybind11_tests.h"
 
@@ -49,7 +32,7 @@ inline int pass_drvd(const drvd* d) { return d->id(); }
 
 TEST_SUBMODULE(private_first_base, m) {
   py::class_<base>(m, "base");
-  py::class_<drvd, base>(m, "drvd");
+  py::class_<drvd, base>(m, "drvd", py::multiple_inheritance());
 
   m.def("make_drvd", make_drvd,
         py::return_value_policy::take_ownership);
